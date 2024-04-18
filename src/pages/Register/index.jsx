@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
+"use client"
+import React, { useState,useEffect } from 'react';
 import InputField from '../../component/InputFiled';
 import Button from '../../component/Button';
 import logo from "../../images/logo.png";
 import bg from "../../images/bg.png";
-import axios from 'axios'; // Import axios for making HTTP requests
-
+import { useDispatch, useSelector } from 'react-redux'
+import { register } from '../../redux/slice/user'
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 const initialState = {
   name: "",
   email: "",
@@ -13,29 +16,45 @@ const initialState = {
 
 const Register = () => {
   const [users, setUser] = useState(initialState);
-
+  const dispatch=useDispatch();
   const onInputChange = e => {
     const { name, value } = e.target;
     setUser({ ...users, [name]: value });
   };
+ 
+  const { user, success,valid, isLoggedIn, error,msg } = useSelector(state => state.auth);
+  
 
-  const handleSubmit = async e => {
+  useEffect(() => {
+    if (error) {
+      toast.error(error);
+    } else if (success) {
+      console.log(success)
+      // Handle the success status
+      toast.success(msg);
+   // Perform any necessary actions on success
+    }
+  }, [error, success]);
+  const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Make a POST request to your backend registration endpoint
-      const response = await axios.post('/registeruser', users);
-      console.log(response.data); // Log the response from the backend
-      // Handle success, show a success message or redirect the user
+      console.log("user",users)
+      dispatch(register(users));
     } catch (error) {
-      console.error('Error:', error); // Log any errors
-      // Handle error, show an error message to the user
+      console.log(error)
     }
   };
+
   return (
 	<div className='h-screen bg-bg_primary flex flex-row justify-between'>
     <div className=' md:flex justify-center items-center w-40% bg-white m-5 hidden'>
         <img src={bg} alt="bg" />
     </div>
+    <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        className="absolute right-0 top-0 mt-20 w-[40px] max-w-sm p-4"
+      />
     <div className='flex items-center justify-center md:w-[60%] w-full'>
       <div className='flex flex-col w-[55%] justify-start gap-10'>
         <div className='flex flex-col gap-2'>
@@ -67,7 +86,7 @@ const Register = () => {
             />
             <div className='flex md:flex-row md:justify-between flex-col gap-3 '>
               <div><Button children="Regiter" size='large'/></div>
-              <div><a className="w-[150px] h-10 item rounded-large flex flex-shrink-0 flex-wrap justify-center bg-white shadow-xl items-center gap-3 border border-none hover"href="/login">Login</a></div>
+              <div><a  className="custom-link" href="/login">Login</a></div>
             </div>
           </div>
             </form>

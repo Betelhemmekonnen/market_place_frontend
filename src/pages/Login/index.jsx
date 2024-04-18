@@ -1,30 +1,42 @@
 
-import React, { useState } from 'react'
+import React, { useState,useEffect } from 'react'
 import InputField from '../../component/InputFiled'
 import Button from '../../component/Button'
 import logo from "../../images/logo.png"
 import bg from "../../images/bg.png"
 import { useDispatch, useSelector } from 'react-redux';
-import { loginUserSuccess, loginUserFailure } from "../../redux/slice/user"
-import axios from 'axios';
-
+import { login } from '../../redux/slice/user'
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 const Login = () => {
   const [users, setUsers] = useState({ email: '', password: '' });
   const dispatch = useDispatch();
-  const error = useSelector(state => state.login.error);
+  const { user, success,valid, isLoggedIn, error,msg } = useSelector(state => state.auth);
+  
 
+  useEffect(() => {
+    if (error) {
+      toast.error(error);
+    } else if (success) {
+      console.log(success)
+      // Handle the success status
+      toast.success(msg);
+   // Perform any necessary actions on success
+    }
+  }, [error, success]);
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('/loginuser', users);
-      dispatch(loginUserSuccess(response.data));
+      console.log("user",users)
+      dispatch(login(users));
     } catch (error) {
-      dispatch(loginUserFailure(error.response.data.message));
+      console.log(error)
     }
   };
   const onInputChange = (e) => {
     const { name, value } = e.target;
     setUsers({ ...users, [name]: value });
+
   };
   return (
   <div className='h-screen bg-bg_primary flex flex-row justify-between'>
@@ -32,6 +44,11 @@ const Login = () => {
         <img src={bg} alt="bg" />
     </div>
     <div className='flex items-center justify-center md:w-[60%] w-full'>
+    <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        className="absolute right-0 top-0 mt-20 w-[40px] max-w-sm p-4"
+      />
       <div className='flex flex-col w-[55%] justify-start gap-10'>
         <div className='flex flex-col gap-2'>
            <div> <img src={logo} alt="logo" /></div>
@@ -59,7 +76,7 @@ const Login = () => {
             </div>
             <div className='flex md:flex-row md:justify-between flex-col gap-3 '>
               <div><Button children="Login" size='large' onSubmit={handleSubmit} /></div>
-              <div> <Button children="Create Account" size='large' variant="normal"/></div>
+              <div><a  className="custom-link" href="/register">Create Account</a></div>
             </div>
           </div>
             </form>
