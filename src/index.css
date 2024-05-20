@@ -2,21 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
-*{
-	margin: 0;
-	padding: 0;
-	box-sizing: border-box;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
-.custom-link {
-	width: 150px;
-	height: 40px;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	background-color: white;
-	box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-	border: none;
-	text-decoration: none; /* Remove underline */
-	color: black; /* Change color to black */
-	font-weight: bold;
-  }
+
+.slide {
+  flex: 0 0 33.33%; /* Show 3 images at a time */
+}
+
+
+
